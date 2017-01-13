@@ -14,21 +14,12 @@ var App = React.createClass({
   fetchWeather: function(city){
     var stateObj = this;  this.props.searchWeather(city, stateObj, function(weather){
       weather.temp = stateObj.fahrenheitConversion(weather.temp);
-      var background = "";
-      if(weather.description === "Clear"){
-        background = 'http://bit.ly/2iMfsxK';  
-      } else if(weather.description === "Clouds"){
-        background = 'http://bit.ly/2jJbudr';
-      } else if(weather.description === "Rain"){
-        background = 'http://bit.ly/2josMcv';
-      } else if(weather.description === "Snow"){
-        background = 'http://bit.ly/2jB8qvU';
-      }
+      var src = chooseBackground(weather.description);
       stateObj.setState({
         city: weather.city,
         description: weather.description,
         temp: weather.temp,
-        imgSrc: background
+        imgSrc: src
       });
     });
   },
@@ -72,13 +63,28 @@ var App = React.createClass({
 });
 
 function searchWeather(city, obj, callback) {
-  $.get('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&APPID=f9b4ff8dc6270f6985b206171298f88b', function(data){
+  $.get('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&APPID=<API key here>', function(data){
     var weatherObj = {};
     weatherObj.city = city,
     weatherObj.description = data.weather[0].main;
     weatherObj.temp = data.main.temp;
     callback(weatherObj);
   });
+}
+
+
+function chooseBackground(skies){
+  var background = "";
+  if(skies === "Clear"){
+    background = 'http://bit.ly/2iMfsxK';  
+  } else if(skies === "Clouds"){
+    background = 'http://bit.ly/2jJbudr';
+  } else if(skies === "Rain"){
+    background = 'http://bit.ly/2josMcv';
+  } else if(skies === "Snow"){
+    background = 'http://bit.ly/2jB8qvU';
+  }
+  return background;
 }
 
 var Search = React.createClass({
